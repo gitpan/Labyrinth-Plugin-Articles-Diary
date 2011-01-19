@@ -15,9 +15,9 @@ vhost/cgi-bin/config/parserules.ini
 vhost/cgi-bin/config/phrasebook.ini
 vhost/cgi-bin/config/requests/diary.ini
 vhost/cgi-bin/db/plugin-base.sql
-vhost/cgi-bin/templates/diary-adminedit.html
-vhost/cgi-bin/templates/diary-adminlist.html
-vhost/cgi-bin/templates/diary-cadminedit.html
-vhost/cgi-bin/templates/diary-cadminlist.html
-vhost/cgi-bin/templates/diary-item.html
-vhost/cgi-bin/templates/diary-list.html
+vhost/cgi-bin/templates/diary/diary-adminedit.html
+vhost/cgi-bin/templates/diary/diary-adminlist.html
+vhost/cgi-bin/templates/diary/diary-cadminedit.html
+vhost/cgi-bin/templates/diary/diary-cadminlist.html
+vhost/cgi-bin/templates/diary/diary-item.html
+vhost/cgi-bin/templates/diary/diary-list.html
