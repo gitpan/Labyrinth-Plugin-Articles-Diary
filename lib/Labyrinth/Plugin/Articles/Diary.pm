@@ -4,7 +4,7 @@ use warnings;
 use strict;
 
 use vars qw($VERSION);
-$VERSION = '1.01';
+$VERSION = '1.02';
 
 =head1 NAME
 
@@ -245,26 +245,6 @@ sub Posted {
 }
 
 # -------------------------------------
-# Private Methods
-
-sub _count_comments {
-    return  unless($tvars{articles} && scalar(keys %{$tvars{articles}}));
-
-    my $ids = join(',', map {$_->{data}{articleid}} @{$tvars{mainarts}});
-    my @rows = $dbi->GetQuery('array','CountDiaryComments',{ids => $ids});
-    my %rows = map {$_->[0] => $_->[1]} @rows;
-    for my $item (@{$tvars{mainarts}}) {
-        $item->{comments} = $rows{$item->{data}{articleid}} || 0;
-    }
-}
-
-sub _vol2date {
-    my ($year,$mon) = $_[0] =~ /^(\d{4})(\d{2})/;
-    if($mon == 13) { $year++;$mon=1; }
-    return timegm(0,0,0,1,$mon-1,$year);
-}
-
-# -------------------------------------
 # Admin Methods
 
 =head1 ADMIN INTERFACE METHODS
@@ -318,6 +298,7 @@ sub Add {
 sub Edit {
     return  unless AccessUser($LEVEL);
     $cgiparams{sectionid} = $SECTIONID;
+
     my $self = shift;
     $self->SUPER::Edit();
     $self->SUPER::Tags();
@@ -376,6 +357,7 @@ sub SaveComment {
                     $tvars{data}->{body},
                     $tvars{data}->{author},
                     $tvars{data}->{href},
+                    $tvars{data}->{publish},
                     $tvars{data}->{commentid}
     );
 
@@ -411,6 +393,26 @@ sub DeleteComment {
     $dbi->DoQuery('DeleteComment',$cgiparams{'commentid'});
 }
 
+# -------------------------------------
+# Private Methods
+
+sub _count_comments {
+    return  unless($tvars{articles} && scalar(keys %{$tvars{articles}}));
+
+    my $ids = join(',', map {$_->{data}{articleid}} @{$tvars{mainarts}});
+    my @rows = $dbi->GetQuery('array','CountDiaryComments',{ids => $ids});
+    my %rows = map {$_->[0] => $_->[1]} @rows;
+    for my $item (@{$tvars{mainarts}}) {
+        $item->{comments} = $rows{$item->{data}{articleid}} || 0;
+    }
+}
+
+sub _vol2date {
+    my ($year,$mon) = $_[0] =~ /^(\d{4})(\d{2})/;
+    if($mon == 13) { $year++;$mon=1; }
+    return timegm(0,0,0,1,$mon-1,$year);
+}
+
 1;
 
 __END__
@@ -426,7 +428,7 @@ Miss Barbell Productions, L<http://www.missbarbell.co.uk/>
 
 =head1 COPYRIGHT & LICENSE
 
-  Copyright (C) 2002-2011 Barbie for Miss Barbell Productions
+  Copyright (C) 2002-2012 Barbie for Miss Barbell Productions
   All Rights Reserved.
 
   This module is free software; you can redistribute it and/or
