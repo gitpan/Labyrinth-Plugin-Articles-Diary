@@ -4,7 +4,7 @@ use warnings;
 use strict;
 
 use vars qw($VERSION);
-$VERSION = '1.05';
+$VERSION = '1.06';
 
 =head1 NAME
 
@@ -434,9 +434,13 @@ sub ListComment {
     $tvars{page}{last}      = $last;
     $tvars{page}{limit}     = $limit;
     $tvars{page}{comments}  = $max;
+
+    my @offenders = $dbi->GetQuery('hash','WorstOffenders');
+    $tvars{offenders} = \@offenders if(@offenders);
 }
 
 sub EditComment {
+    return  unless AccessUser($LEVEL);
     return  unless AuthorCheck('GetCommentByID','commentid',$LEVEL);
     $tvars{comment} = $tvars{data};
     $tvars{comment}->{postdate}  = formatDate(17,$tvars{comment}->{createdate});
@@ -444,6 +448,7 @@ sub EditComment {
 }
 
 sub SaveComment {
+    return  unless AccessUser($LEVEL);
     return  unless AuthorCheck('GetCommentByID','commentid',$LEVEL);
     for(keys %cfields) {
         next    unless($cfields{$_});
@@ -467,16 +472,19 @@ sub SaveComment {
 }
 
 sub PromoteComment {
+    return  unless AccessUser($LEVEL);
     return  unless AuthorCheck('GetCommentByID','commentid',$LEVEL);
     $dbi->DoQuery('PromoteComment',$tvars{data}->{publish}+1,$cgiparams{'commentid'});
 }
 
 sub DeleteComment {
+    return  unless AccessUser($LEVEL);
     return  unless AuthorCheck('GetCommentByID','commentid',$LEVEL);
     $dbi->DoQuery('DeleteComment',$cgiparams{'commentid'});
 }
 
 sub MarkIP {
+    return  unless AccessUser($LEVEL);
     return  unless AuthorCheck('GetCommentByID','commentid',$LEVEL);
     return  unless $cgiparams{mark};
     my $mark = $cgiparams{mark} eq 'allow' ? 2 : 1;
